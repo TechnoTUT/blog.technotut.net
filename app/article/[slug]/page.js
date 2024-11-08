@@ -9,6 +9,9 @@ import Text from '../../../components/text';
 import { renderBlock } from '../../../components/notion/renderer';
 import styles from '../../../styles/post.module.css';
 
+// Set the runtime to Edge to enable Server-Side Rendering
+export const runtime = "edge";
+
 // Return a list of `params` to populate the [slug] dynamic segment
 export async function generateStaticParams() {
   const database = await getDatabase();
