@@ -1,11 +1,6 @@
 name: deploy website
 "on":
   push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
   workflow_dispatch:
   schedule:
     - cron: '0 15 * * *'
@@ -19,21 +14,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - uses: actions/cache@v3
-        id: node_modules_cache_id
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      - run: echo '${{ toJSON(steps.node_modules_cache_id.outputs) }}'
 
       - name: Installing my packages
         if: ${{ steps.node_modules_cache_id.outputs.cache-hit != 'true' }}
         run: yarn install --frozen-lockfile
 
       - name: Build my App
-        run: yarn build
+        run: yarn pages:build
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
@@ -43,4 +30,4 @@ jobs:
         with: 
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy out --project-name blog
+          command: pages deploy
